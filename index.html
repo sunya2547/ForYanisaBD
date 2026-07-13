@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday พรีม!</title>
     <style>
-        /* ธีมพื้นหลังตอนแรก (สไตล์ Windows 95 สี Teal) */
+        /* ธีมพื้นหลัง สี Teal) */
         body {
             margin: 0;
             padding: 0;
@@ -221,7 +221,7 @@
             player = new YT.Player('youtube-player', {
                 height: '0',
                 width: '0',
-                videoId: '0i4UH2lK4ag', // รหัสต่อท้าย URL ของคุณ
+                videoId: '0i4UH2lK4ag',
                 playerVars: {
                     'autoplay': 0,
                     'controls': 0,
@@ -243,8 +243,10 @@
 
         function startTroll() {
             const bday = document.getElementById('bday-input').value;
-            if(!bday) {
-                alert("กรุณาใส่วันเกิดก่อนสิคะ อีแก่!");
+            
+            // บังคับให้ใส่วันเกิด 16 กรกฎาคม 2004 เท่านั้น (Format: YYYY-MM-DD)
+            if(bday !== '2004-07-16') {
+                alert("ใส่รหัสผิด");
                 return;
             }
 
@@ -297,12 +299,38 @@
                 startCountdown();
             }
         }
-        // สุ่มตำแหน่งให้อยู่ในหน้าจอ (10% ถึง 60%)
+
+        // เก็บพิกัดเดิมไว้ เพื่อใช้เช็คระยะห่าง
+        let lastX = window.innerWidth / 2;
+        let lastY = window.innerHeight / 2;
+
         function moveBoxRandomly() {
-            const randomX = Math.floor(Math.random() * 50) + 10;
-            const randomY = Math.floor(Math.random() * 60) + 10;
-            step2.style.left = randomX + '%';
-            step2.style.top = randomY + '%';
+            // คำนวณขอบเขตสูงสุดที่กล่องจะไม่หลุดหน้าจอ (หักลบด้วยขนาดกล่องและระยะเผื่อ 20px)
+            const boxWidth = step2.offsetWidth || 280;
+            const boxHeight = step2.offsetHeight || 120;
+            const maxX = Math.max(10, window.innerWidth - boxWidth - 20);
+            const maxY = Math.max(10, window.innerHeight - boxHeight - 20);
+
+            let newX, newY;
+            let distance = 0;
+            let attempts = 0;
+
+            // สุ่มพิกัดใหม่ไปเรื่อยๆ จนกว่าระยะห่างจากจุดเดิมจะมากกว่า 150 พิกเซล
+            do {
+                newX = 10 + Math.random() * (maxX - 10);
+                newY = 10 + Math.random() * (maxY - 10);
+                
+                const dx = newX - lastX;
+                const dy = newY - lastY;
+                distance = Math.sqrt(dx * dx + dy * dy);
+                attempts++;
+            } while (distance < 150 && attempts < 50);
+
+            lastX = newX;
+            lastY = newY;
+
+            step2.style.left = newX + 'px';
+            step2.style.top = newY + 'px';
         }
 
         function startCountdown() {
@@ -367,7 +395,6 @@
             let sec = d.getSeconds() - metDate.getSeconds();
             if (sec < 0) { min--; sec += 60; }
 
-            // รูปแบบ years:months:days:hours:minutes:seconds
             document.getElementById('timer').innerHTML = 
                 `<b>${y}</b> years : <b>${m}</b> months : <b>${dt}</b> days : <br><b>${hr}</b> hours : <b>${min}</b> minutes : <b>${sec}</b> seconds`;
         }
@@ -403,7 +430,6 @@
         function startFireworks() {
             function animate() {
                 requestAnimationFrame(animate);
-                // สร้าง Trail Effect
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -412,7 +438,7 @@
                 particles.forEach((p, index) => {
                     p.x += p.vx;
                     p.y += p.vy;
-                    p.vy += 0.05; // แรงโน้มถ่วง
+                    p.vy += 0.05;
                     p.alpha -= p.decay;
 
                     ctx.fillStyle = p.color;
@@ -424,7 +450,6 @@
                     if (p.alpha <= 0) particles.splice(index, 1);
                 });
 
-                // สุ่มจุดพลุเรื่อยๆ
                 if (Math.random() < 0.04) {
                     createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.6));
                 }
