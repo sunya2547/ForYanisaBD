@@ -205,8 +205,8 @@
     <div id="countdown-text">3</div>
     
     <div id="final-screen">
-        <h1>Happy Birthday<br>to พรีม 🎂</h1>
-        <p>เรารู้จักกันมาแล้ว...</p>
+        <h1>Happy Birthday to my Luangmae</h1>
+        <p>How far we grow together</p>
         <div class="time-counter" id="timer">
             กำลังคำนวณ...
         </div>
@@ -244,7 +244,7 @@
         function startTroll() {
             const bday = document.getElementById('bday-input').value;
             if(!bday) {
-                alert("กรุณาใส่วันเกิดก่อนครับ!");
+                alert("กรุณาใส่วันเกิดก่อนสิคะ อีแก่!");
                 return;
             }
 
@@ -270,16 +270,35 @@
                 setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
             } 
             else if(trollStep === 3) {
-                trollMsg.innerText = "ครั้งสุดท้ายห่ะ";
+                trollMsg.innerText = "มีอะไรจะบอก";
+                setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
+            } 
+            else if(trollStep === 4) {
+                trollMsg.innerText = "กุดีใจที่ได้ทักมึงนะ วันนั้น";
+                setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
+            } 
+            else if(trollStep === 5) {
+                trollMsg.innerText = "กุดีใจที่ได้โตมาด้วยกัน";
+                setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
+            } 
+            else if(trollStep === 6) {
+                trollMsg.innerText = "ใช่...ชีวิตมันยาก แต่กุว่ามึงเก่งมากเลยว่ะที่ผ่านมาได้";
+                setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
+            }
+            else if(trollStep === 7) {
+                trollMsg.innerText = "มันไม่ใช่ว่าแค่เรื่องเล็กๆทำไมต้องคิดมาก แต่แค่เรื่องเล็กๆทำไมถึงไม่ทำ";
+                setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
+            } 
+            else if(trollStep === ) {
+                trollMsg.innerText = "อยู่กับกุไปนานๆนะ";
                 setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
             } 
             else {
                 startCountdown();
             }
         }
-
+        // สุ่มตำแหน่งให้อยู่ในหน้าจอ (10% ถึง 60%)
         function moveBoxRandomly() {
-            // สุ่มตำแหน่งให้อยู่ในหน้าจอ (10% ถึง 60%)
             const randomX = Math.floor(Math.random() * 50) + 10;
             const randomY = Math.floor(Math.random() * 60) + 10;
             step2.style.left = randomX + '%';
