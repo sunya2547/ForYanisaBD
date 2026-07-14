@@ -34,7 +34,7 @@
 
         /* ธีมตอนนับถอยหลัง */
         body.night-mode {
-            background: radial-gradient(circle at 50% 30%, var(--deep-blue) 0%, var(--navy) 65%);
+            background: radial-gradient(var(--deep-blue) 65%, var(--navy) 65%);
         }
 
         /* Canvas พลุ + คอนเฟตตี้ */
@@ -323,7 +323,7 @@
     <!-- YouTube IFrame API Script -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- ส่วนที่ 1: ตั้งค่า Youtube BGM (Autoplay แบบบังคับ) ---
+        // --- ตั้งค่า Youtube BGM (Autoplay แบบบังคับ) ---
         let player;
         let isMusicPlaying = false;
 
@@ -369,7 +369,7 @@
             }, { once: true });
         }
 
-        // --- ส่วนที่ 2: ตั้งค่าตัวแปรวันที่ (15 May 2017) ---
+        // --- ตั้งค่าตัวแปรวันที่ (15 May 2017) ---
         const metDate = new Date("2017-05-15T00:00:00");
 
         let trollStep = 1;
@@ -512,7 +512,7 @@
             document.getElementById('statSeconds').textContent = sec;
         }
 
-        // --- ระบบเสียง Fanfare (Web Audio API, ไม่ต้องใช้ไฟล์เสียงภายนอก) ---
+        // --- ระบบเสียง Fanfare ---
         function playFanfare() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
