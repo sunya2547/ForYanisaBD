@@ -1,464 +1,609 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Happy Birthday to my Luangmae</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --primary:#00539C;
-    --primary-dark:#00305c;
-    --primary-light:#3E86C9;
-    --galaxy-1:#050818;
-    --galaxy-2:#0B1440;
-    --galaxy-3:#1B2A6B;
-    --accent-gold:#FFD166;
-    --accent-pink:#FF6FA5;
-    --glass:rgba(255,255,255,0.07);
-    --glass-border:rgba(255,255,255,0.18);
-    --text:#EAF2FF;
-  }
-  *{box-sizing:border-box;}
-  html,body{
-    margin:0;padding:0;width:100%;height:100%;overflow:hidden;
-    font-family:'Kanit','Poppins',sans-serif;
-    color:var(--text);
-    background:var(--galaxy-1);
-  }
-  body{
-    display:flex;align-items:center;justify-content:center;
-    position:relative;
-    transition:background 1.2s ease;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday to my Luangmae</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue: #00539C;
+            --navy: #001F3F;
+            --sky: #4FA8DA;
+            --gold: #F0C419;
+            --gold-soft: #FFE9A8;
+            --ivory: #F5F8FC;
+        }
 
-  /* ===== Galaxy background layers ===== */
-  #stars{position:fixed;inset:0;z-index:0;}
-  .nebula{
-    position:fixed;border-radius:50%;filter:blur(70px);opacity:.35;
-    z-index:0;pointer-events:none;
-  }
-  .nebula.n1{width:420px;height:420px;background:var(--primary);top:-100px;left:-120px;animation:drift 18s ease-in-out infinite;}
-  .nebula.n2{width:360px;height:360px;background:var(--accent-pink);bottom:-120px;right:-100px;animation:drift 22s ease-in-out infinite reverse;}
-  .nebula.n3{width:300px;height:300px;background:var(--galaxy-3);top:40%;left:60%;animation:drift 26s ease-in-out infinite;}
-  @keyframes drift{
-    0%,100%{transform:translate(0,0) scale(1);}
-    50%{transform:translate(30px,-20px) scale(1.15);}
-  }
+        * { box-sizing: border-box; }
 
-  #confetti-canvas,#fireworks-canvas{
-    position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;display:none;
-  }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            background-color: #008080;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background 1.2s ease;
+        }
 
-  /* ===== Window chrome (Windows + Galaxy glass) ===== */
-  .os-window{
-    position:relative;z-index:10;
-    width:90%;max-width:400px;
-    background:var(--glass);
-    border:1px solid var(--glass-border);
-    border-radius:16px;
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    box-shadow:0 8px 40px rgba(0,20,60,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset;
-    opacity:0;transform:translateY(16px) scale(.98);
-    pointer-events:none;
-    transition:opacity .5s ease, transform .5s ease;
-  }
-  .os-window.active{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+        /* ธีมตอนนับถอยหลัง / ดูพลุ — โทนน้ำเงินหรู */
+        body.night-mode {
+            background: radial-gradient(circle at 50% 30%, var(--deep-blue) 0%, var(--navy) 65%, #000913 100%);
+        }
 
-  .title-bar{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:10px 14px;
-    background:linear-gradient(90deg,var(--primary-dark),var(--primary));
-    border-radius:16px 16px 0 0;
-    font-size:13px;letter-spacing:.5px;font-weight:500;
-  }
-  .traffic{display:flex;gap:7px;}
-  .dot{width:11px;height:11px;border-radius:50%;box-shadow:0 0 4px rgba(0,0,0,.4) inset;}
-  .dot.red{background:#FF5F57;}
-  .dot.yellow{background:#FEBC2E;}
-  .dot.green{background:#28C840;}
+        /* Canvas สำหรับพลุ + คอนเฟตตี้ */
+        #fireworks-canvas {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
 
-  .content{padding:26px 22px 24px;text-align:center;}
-  .content p{font-size:14.5px;line-height:1.6;margin:0 0 14px;color:#DCE9FF;}
+        /* สไตล์กล่องข้อความ Windows 95 (คงเดิมตามที่ต้องการ) */
+        .win-box {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-top-color: #ffffff;
+            border-left-color: #ffffff;
+            border-right-color: #000000;
+            border-bottom-color: #000000;
+            box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #808080;
+            padding: 2px;
+            width: 85%;
+            max-width: 300px;
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
 
-  input[type="date"]{
-    width:85%;padding:9px 10px;margin:6px 0 16px;
-    border-radius:10px;border:1px solid var(--glass-border);
-    background:rgba(255,255,255,0.9);color:#111;
-    font-family:'Kanit',sans-serif;font-size:14px;
-  }
+        .active {
+            opacity: 1;
+            pointer-events: all;
+        }
 
-  .btn{
-    background:linear-gradient(135deg,var(--primary-light),var(--primary));
-    color:#fff;border:none;padding:10px 26px;border-radius:10px;
-    font-family:'Kanit',sans-serif;font-size:14px;font-weight:500;
-    cursor:pointer;box-shadow:0 4px 14px rgba(0,83,156,0.5);
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,83,156,.65);}
-  .btn:active{transform:translateY(0) scale(.96);}
+        .title-bar {
+            background: #000080;
+            color: white;
+            padding: 3px 5px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-  /* ===== Floating troll dialog ===== */
-  .alert-box{
-    position:fixed;z-index:15;
-    width:86%;max-width:300px;
-    background:var(--glass);
-    border:1px solid var(--glass-border);
-    border-radius:14px;
-    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-    box-shadow:0 8px 30px rgba(0,10,40,0.6);
-    opacity:0;pointer-events:none;
-    transition:opacity .35s ease, top .5s cubic-bezier(.34,1.56,.64,1), left .5s cubic-bezier(.34,1.56,.64,1);
-  }
-  .alert-box.active{opacity:1;pointer-events:all;}
-  .alert-title{
-    background:linear-gradient(90deg,#8A2E4B,var(--accent-pink));
-    padding:8px 12px;border-radius:14px 14px 0 0;
-    font-size:12.5px;font-weight:500;display:flex;justify-content:space-between;
-  }
-  .alert-content{padding:16px;display:flex;align-items:flex-start;gap:12px;}
-  .alert-icon{
-    flex-shrink:0;width:26px;height:26px;border-radius:50%;
-    background:#FF5F57;color:#fff;display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:15px;box-shadow:0 0 8px rgba(255,95,87,.6);
-  }
-  .alert-content p{font-size:13.5px;margin:0;text-align:left;line-height:1.5;color:#F3F6FF;}
-  .alert-box .btn{margin:0 16px 14px;padding:7px 20px;font-size:13px;}
+        .title-close {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-top-color: #ffffff;
+            border-left-color: #ffffff;
+            border-right-color: #000000;
+            border-bottom-color: #000000;
+            font-weight: bold;
+            font-size: 10px;
+            padding: 1px 4px;
+            cursor: pointer;
+            color: black;
+        }
 
-  /* ===== Countdown ===== */
-  #countdown-text{
-    position:fixed;z-index:12;display:none;
-    font-family:'Poppins',sans-serif;font-weight:700;
-    font-size:clamp(70px,22vw,130px);
-    color:#fff;text-shadow:0 0 25px var(--primary-light),0 0 60px var(--accent-pink);
-    transition:transform .15s ease;
-  }
+        .content {
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: black;
+        }
 
-  /* ===== Final screen ===== */
-  #final-screen{
-    position:relative;z-index:10;display:none;flex-direction:column;align-items:center;
-    text-align:center;padding:20px;max-width:420px;
-    animation:fadeInUp 1s ease forwards;
-  }
-  @keyframes fadeInUp{
-    from{opacity:0;transform:translateY(24px);}
-    to{opacity:1;transform:translateY(0);}
-  }
-  #final-screen h1{
-    font-family:'Kanit',sans-serif;font-weight:600;font-size:clamp(22px,6vw,30px);
-    margin:0 0 8px;
-    background:linear-gradient(90deg,var(--accent-gold),var(--accent-pink),var(--primary-light));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-shadow:none;
-  }
-  #final-screen .sub{color:#CFE0FF;font-size:14px;margin:0 0 16px;}
-  .photo-placeholder{
-    width:200px;height:200px;border-radius:16px;
-    background:rgba(255,255,255,0.08);
-    border:1px dashed rgba(255,255,255,0.35);
-    display:flex;align-items:center;justify-content:center;
-    color:#B9CBEF;font-size:13px;margin-bottom:16px;
-  }
-  .time-counter{
-    background:var(--glass);border:1px solid var(--glass-border);
-    padding:16px 18px;border-radius:14px;font-size:14px;line-height:1.8;
-    backdrop-filter:blur(14px);box-shadow:0 6px 24px rgba(0,10,40,.5);
-  }
-  .time-counter b{color:var(--accent-gold);}
+        input[type="date"] {
+            margin: 15px 0;
+            padding: 4px;
+            font-family: 'Tahoma', sans-serif;
+            border: 2px solid;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #ffffff;
+            border-bottom-color: #ffffff;
+            width: 80%;
+        }
 
-  #sound-toggle{
-    position:fixed;top:14px;right:14px;z-index:30;
-    width:38px;height:38px;border-radius:50%;
-    background:var(--glass);border:1px solid var(--glass-border);
-    color:#fff;font-size:16px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-  }
-</style>
+        button.win-btn {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-top-color: #ffffff;
+            border-left-color: #ffffff;
+            border-right-color: #000000;
+            border-bottom-color: #000000;
+            padding: 5px 20px;
+            font-family: 'Tahoma', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            color: black;
+            margin-top: 10px;
+        }
+
+        button.win-btn:active {
+            border-top-color: #000000;
+            border-left-color: #000000;
+            border-right-color: #ffffff;
+            border-bottom-color: #ffffff;
+            box-shadow: inset 1px 1px #808080;
+        }
+
+        /* ============ ตั้งแต่หน้านับถอยหลังเป็นต้นไป — ธีมใหม่ ============ */
+
+        #countdown-text {
+            position: relative;
+            display: none;
+            z-index: 20;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: clamp(90px, 22vw, 160px);
+            background: linear-gradient(180deg, var(--gold-soft) 0%, var(--gold) 60%, #C8960B 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 22px rgba(240, 196, 25, 0.55));
+            transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), opacity 0.25s ease;
+        }
+
+        #final-screen {
+            display: none;
+            position: relative;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 20;
+            font-family: 'Poppins', sans-serif;
+            color: var(--ivory);
+            width: 100%;
+            max-width: 480px;
+            padding: 28px 24px;
+            opacity: 0;
+            transform: translateY(14px);
+            animation: riseIn 1s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        @keyframes riseIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* แสงนวลด้านหลังการ์ด — signature element */
+        #final-screen::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 340px;
+            height: 340px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(240,196,25,0.28) 0%, rgba(79,168,218,0.12) 45%, transparent 72%);
+            filter: blur(6px);
+            z-index: -1;
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--sky);
+            margin: 0 0 10px;
+        }
+
+        #final-screen h1 {
+            font-size: clamp(24px, 6vw, 32px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin: 0 0 8px;
+            background: linear-gradient(180deg, #ffffff 0%, var(--gold-soft) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 24px rgba(240,196,25,0.25);
+        }
+
+        #final-screen > p {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(245,248,252,0.75);
+            margin: 0 0 22px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.14);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 14px 4px;
+        }
+
+        .stat-num {
+            display: block;
+            font-size: clamp(20px, 5vw, 26px);
+            font-weight: 700;
+            color: var(--gold);
+            text-shadow: 0 0 12px rgba(240,196,25,0.35);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(245,248,252,0.6);
+            margin-top: 4px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #final-screen, #final-screen::before, #countdown-text {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<canvas id="stars"></canvas>
-<div class="nebula n1"></div>
-<div class="nebula n2"></div>
-<div class="nebula n3"></div>
-<canvas id="confetti-canvas"></canvas>
-<canvas id="fireworks-canvas"></canvas>
+    <!-- ซ่อน Video YouTube ไว้ทำเป็น BGM -->
+    <div style="display:none;" id="youtube-player"></div>
 
-<button id="sound-toggle" onclick="toggleSound()">🔊</button>
+    <!-- พลุ + คอนเฟตตี้ -->
+    <canvas id="fireworks-canvas"></canvas>
 
-<!-- Step 1: birthday input -->
-<div id="step1" class="os-window active">
-  <div class="title-bar">
-    <span>🪐 Verification.exe</span>
-    <div class="traffic"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
-  </div>
-  <div class="content">
-    <p>กรุณายืนยันวันเกิดของคุณเพื่อเข้าใช้งาน:</p>
-    <input type="date" id="bday-input">
-    <br>
-    <button class="btn" onclick="startTroll()">Submit</button>
-  </div>
-</div>
+    <!-- กล่องใส่วันเกิด -->
+    <div id="step1" class="win-box active">
+        <div class="title-bar">
+            <span>Message</span>
+            <button class="title-close">X</button>
+        </div>
+        <div class="content">
+            <p>กรุณายืนยันวันเกิดของคุณเพื่อเข้าใช้งาน:</p>
+            <input type="date" id="bday-input">
+            <br>
+            <button class="win-btn" onclick="startTroll()">Submit</button>
+        </div>
+    </div>
 
-<!-- Floating troll dialog -->
-<div id="step2" class="alert-box">
-  <div class="alert-title">
-    <span>⚠ System Message</span>
-    <span>✕</span>
-  </div>
-  <div class="alert-content">
-    <div class="alert-icon">!</div>
-    <p id="troll-msg">อุ้ย กดไม่โดน</p>
-  </div>
-  <button class="btn" onclick="nextTroll()">OK</button>
-</div>
+    <!-- รูปแบบกล่องข้อความ -->
+    <div id="step2" class="win-box">
+        <div class="title-bar">
+            <span>Error</span>
+            <button class="title-close">X</button>
+        </div>
+        <div class="content">
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <div style="background: red; color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; margin-right: 15px; flex-shrink: 0;">X</div>
+                <p id="troll-msg" style="margin: 0; text-align: left;">อุ้ย กดไม่โดน</p>
+            </div>
+            <button class="win-btn" onclick="nextTroll()">OK</button>
+        </div>
+    </div>
 
-<div id="countdown-text">3</div>
+    <!-- Countdown -->
+    <div id="countdown-text">3</div>
 
-<div id="final-screen">
-  <h1>Happy Birthday to my Luangmae 🎉</h1>
-  <p class="sub">How far we have grown-up together</p>
-  <div class="photo-placeholder">Photo Here</div>
-  <div class="time-counter" id="timer">กำลังคำนวณ...</div>
-</div>
+    <!-- Final screen — ธีมใหม่ -->
+    <div id="final-screen">
+        <p class="eyebrow">Today, we celebrate</p>
+        <h1>Happy Birthday to my Luangmae</h1>
+        <p>How far we have grown-up together</p>
+        <div class="stat-grid" id="timer">
+            <div class="stat-box"><span class="stat-num" id="statYears">0</span><span class="stat-label">Years</span></div>
+            <div class="stat-box"><span class="stat-num" id="statMonths">0</span><span class="stat-label">Months</span></div>
+            <div class="stat-box"><span class="stat-num" id="statDays">0</span><span class="stat-label">Days</span></div>
+            <div class="stat-box"><span class="stat-num" id="statHours">0</span><span class="stat-label">Hours</span></div>
+            <div class="stat-box"><span class="stat-num" id="statMinutes">0</span><span class="stat-label">Minutes</span></div>
+            <div class="stat-box"><span class="stat-num" id="statSeconds">0</span><span class="stat-label">Seconds</span></div>
+        </div>
+    </div>
 
-<script>
-/* ================= Starfield background ================= */
-const starCanvas = document.getElementById('stars');
-const sctx = starCanvas.getContext('2d');
-function resizeStars(){ starCanvas.width = innerWidth; starCanvas.height = innerHeight; }
-resizeStars(); window.addEventListener('resize', resizeStars);
-const stars = Array.from({length:140}, () => ({
-  x:Math.random()*innerWidth, y:Math.random()*innerHeight,
-  r:Math.random()*1.4+.2, a:Math.random(), speed:Math.random()*0.015+0.003
-}));
-function drawStars(){
-  sctx.clearRect(0,0,starCanvas.width,starCanvas.height);
-  sctx.fillStyle = '#0a0f2b';
-  sctx.fillRect(0,0,starCanvas.width,starCanvas.height);
-  stars.forEach(s=>{
-    s.a += s.speed;
-    const alpha = Math.abs(Math.sin(s.a));
-    sctx.beginPath();
-    sctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    sctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    sctx.fill();
-  });
-  requestAnimationFrame(drawStars);
-}
-drawStars();
+    <!-- YouTube IFrame API Script -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // --- ส่วนที่ 1: ตั้งค่า Youtube BGM ---
+        let player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: '0i4UH2lK4ag',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': '0i4UH2lK4ag'
+                }
+            });
+        }
 
-/* ================= Sound engine (Web Audio, no external files) ================= */
-let audioCtx = null, soundOn = true;
-function ensureAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
-function toggleSound(){
-  soundOn = !soundOn;
-  document.getElementById('sound-toggle').textContent = soundOn ? '🔊' : '🔇';
-}
-function tone(freq, duration=0.15, type='sine', delay=0, gain=0.08){
-  if(!soundOn) return;
-  ensureAudio();
-  const osc = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  osc.type = type; osc.frequency.value = freq;
-  g.gain.value = gain;
-  osc.connect(g); g.connect(audioCtx.destination);
-  const t0 = audioCtx.currentTime + delay;
-  g.gain.setValueAtTime(gain, t0);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0+duration);
-  osc.start(t0); osc.stop(t0+duration+0.02);
-}
-function sfxClick(){ tone(520,0.1,'triangle'); }
-function sfxError(){ tone(220,0.18,'sawtooth'); tone(160,0.22,'sawtooth',0.08); }
-function sfxTick(){ tone(880,0.08,'square'); }
-function sfxFanfare(){
-  [523,659,784,1046].forEach((f,i)=>tone(f,0.35,'triangle',i*0.12,0.09));
-}
+        // --- ส่วนที่ 2: ตั้งค่าตัวแปรวันที่ (15 May 2017) ---
+        const metDate = new Date("2017-05-15T00:00:00");
 
-/* ================= Troll flow ================= */
-const metDate = new Date("2017-05-15T00:00:00");
-let trollStep = 1;
-const step1 = document.getElementById('step1');
-const step2 = document.getElementById('step2');
-const trollMsg = document.getElementById('troll-msg');
-const countdownText = document.getElementById('countdown-text');
-const finalScreen = document.getElementById('final-screen');
+        let trollStep = 1;
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const trollMsg = document.getElementById('troll-msg');
+        const countdownText = document.getElementById('countdown-text');
+        const finalScreen = document.getElementById('final-screen');
 
-function startTroll(){
-  const bday = document.getElementById('bday-input').value;
-  if(bday !== '2004-07-16'){
-    sfxError();
-    alert("กรุณาใส่วันเกิดให้ถูกก่อนนะคะ 😉");
-    return;
-  }
-  sfxClick();
-  step1.classList.remove('active');
-  setTimeout(()=>{ moveBoxRandomly(); step2.classList.add('active'); }, 300);
-}
+        function startTroll() {
+            const bday = document.getElementById('bday-input').value;
 
-const messages = [
-  "เมื่อไหร่จะโดน",
-  "มีอะไรจะบอก",
-  "กุดีใจที่ได้ทักมึงนะ วันนั้น",
-  "กุดีใจที่ได้โตมาด้วยกัน",
-  "ใช่...ชีวิตมันยาก แต่กุว่ามึงเก่งมากเลยว่ะที่ผ่านมาได้",
-  "มันไม่ใช่ว่าแค่เรื่องเล็กๆทำไมต้องคิดมาก แต่แค่เรื่องเล็กๆทำไมถึงไม่ทำ",
-  "อยู่กับกุไปนานๆนะ"
-];
+            if (bday !== '2004-07-16') {
+                alert("กรุณาใส่วันเกิดให้ถุกก่อนสิคะ อีแก่!");
+                return;
+            }
 
-function nextTroll(){
-  sfxClick();
-  step2.classList.remove('active');
-  trollStep++;
-  if(trollStep-2 < messages.length){
-    trollMsg.innerText = messages[trollStep-2];
-    setTimeout(()=>{ moveBoxRandomly(); step2.classList.add('active'); }, 200);
-  } else {
-    startCountdown();
-  }
-}
+            if (player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            }
 
-let lastX = innerWidth/2, lastY = innerHeight/2;
-function moveBoxRandomly(){
-  const boxWidth = step2.offsetWidth || 280;
-  const boxHeight = step2.offsetHeight || 140;
-  const maxX = Math.max(10, innerWidth - boxWidth - 20);
-  const maxY = Math.max(10, innerHeight - boxHeight - 20);
-  let newX, newY, distance = 0, attempts = 0;
-  do{
-    newX = 10 + Math.random()*(maxX-10);
-    newY = 10 + Math.random()*(maxY-10);
-    const dx = newX-lastX, dy = newY-lastY;
-    distance = Math.sqrt(dx*dx+dy*dy);
-    attempts++;
-  } while(distance < 150 && attempts < 50);
-  lastX = newX; lastY = newY;
-  step2.style.left = newX+'px';
-  step2.style.top = newY+'px';
-}
+            step1.classList.remove('active');
 
-/* ================= Countdown ================= */
-function startCountdown(){
-  document.getElementById('fireworks-canvas').style.display = 'block';
-  startFireworks();
-  countdownText.style.display = 'block';
-  let count = 3;
-  countdownText.innerText = count;
-  sfxTick();
-  const interval = setInterval(()=>{
-    count--;
-    if(count > 0){
-      countdownText.style.transform = 'scale(0.8)';
-      sfxTick();
-      setTimeout(()=>{
-        countdownText.innerText = count;
-        countdownText.style.transform = 'scale(1.2)';
-      }, 50);
-    } else {
-      clearInterval(interval);
-      countdownText.style.display = 'none';
-      showFinalScreen();
-    }
-  }, 1000);
-}
+            setTimeout(() => {
+                moveBoxRandomly();
+                step2.classList.add('active');
+            }, 300);
+        }
 
-/* ================= Final screen ================= */
-function showFinalScreen(){
-  sfxFanfare();
-  finalScreen.style.display = 'flex';
-  document.getElementById('confetti-canvas').style.display = 'block';
-  startConfetti();
-  setInterval(updateTimer, 1000);
-  updateTimer();
-}
+        function nextTroll() {
+            step2.classList.remove('active');
+            trollStep++;
 
-function updateTimer(){
-  const now = new Date();
-  let d = new Date(now);
-  let y = d.getFullYear() - metDate.getFullYear();
-  let m = d.getMonth() - metDate.getMonth();
-  let dt = d.getDate() - metDate.getDate();
-  if(dt < 0){ m--; const temp = new Date(d.getFullYear(), d.getMonth(), 0); dt += temp.getDate(); }
-  if(m < 0){ y--; m += 12; }
-  let hr = d.getHours() - metDate.getHours();
-  if(hr < 0){ dt--; hr += 24; }
-  let min = d.getMinutes() - metDate.getMinutes();
-  if(min < 0){ hr--; min += 60; }
-  let sec = d.getSeconds() - metDate.getSeconds();
-  if(sec < 0){ min--; sec += 60; }
-  document.getElementById('timer').innerHTML =
-    `<b>${y}</b> ปี : <b>${m}</b> เดือน : <b>${dt}</b> วัน<br><b>${hr}</b> ชม. : <b>${min}</b> นาที : <b>${sec}</b> วิ`;
-}
+            const messages = {
+                2: "เมื่อไหร่จะโดน",
+                3: "มีอะไรจะบอก",
+                4: "กุดีใจที่ได้ทักมึงนะ วันนั้น",
+                5: "กุดีใจที่ได้โตมาด้วยกัน",
+                6: "ใช่...ชีวิตมันยาก แต่กุว่ามึงเก่งมากเลยว่ะที่ผ่านมาได้",
+                7: "มันไม่ใช่ว่าแค่เรื่องเล็กๆทำไมต้องคิดมาก แต่แค่เรื่องเล็กๆทำไมถึงไม่ทำ",
+                8: "อยู่กับกุไปนานๆนะ"
+            };
 
-/* ================= Fireworks ================= */
-const fwCanvas = document.getElementById('fireworks-canvas');
-const fctx = fwCanvas.getContext('2d');
-fwCanvas.width = innerWidth; fwCanvas.height = innerHeight;
-window.addEventListener('resize', ()=>{ fwCanvas.width = innerWidth; fwCanvas.height = innerHeight; });
-let fwParticles = [];
-const fwColors = ['#00539C','#3E86C9','#FFD166','#FF6FA5','#7A2E8E'];
-function createFirework(x,y){
-  const color = fwColors[Math.floor(Math.random()*fwColors.length)];
-  for(let i=0;i<55;i++){
-    fwParticles.push({
-      x,y, vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*8,
-      color, alpha:1, decay:Math.random()*0.015+0.012
-    });
-  }
-}
-function startFireworks(){
-  function animate(){
-    requestAnimationFrame(animate);
-    fctx.globalCompositeOperation = 'destination-out';
-    fctx.fillStyle = 'rgba(0,0,0,0.2)';
-    fctx.fillRect(0,0,fwCanvas.width,fwCanvas.height);
-    fctx.globalCompositeOperation = 'lighter';
-    fwParticles.forEach((p,i)=>{
-      p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.alpha-=p.decay;
-      fctx.fillStyle = p.color; fctx.globalAlpha = Math.max(0,p.alpha);
-      fctx.beginPath(); fctx.arc(p.x,p.y,2.5,0,Math.PI*2); fctx.fill();
-      if(p.alpha<=0) fwParticles.splice(i,1);
-    });
-    if(Math.random()<0.05) createFirework(Math.random()*fwCanvas.width, Math.random()*(fwCanvas.height*0.5));
-  }
-  animate();
-}
+            if (messages[trollStep]) {
+                trollMsg.innerText = messages[trollStep];
+                setTimeout(() => { moveBoxRandomly(); step2.classList.add('active'); }, 200);
+            } else {
+                startCountdown();
+            }
+        }
 
-/* ================= Confetti ================= */
-const cCanvas = document.getElementById('confetti-canvas');
-const cctx = cCanvas.getContext('2d');
-cCanvas.width = innerWidth; cCanvas.height = innerHeight;
-window.addEventListener('resize', ()=>{ cCanvas.width = innerWidth; cCanvas.height = innerHeight; });
-let confetti = [];
-const confettiColors = ['#00539C','#3E86C9','#FFD166','#FF6FA5','#FFFFFF'];
-function initConfetti(){
-  confetti = Array.from({length:140}, ()=>({
-    x:Math.random()*cCanvas.width, y:-20-Math.random()*cCanvas.height,
-    r:Math.random()*5+3, color:confettiColors[Math.floor(Math.random()*confettiColors.length)],
-    speed:Math.random()*2.5+1.5, drift:Math.random()*2-1, rot:Math.random()*360, rotSpeed:Math.random()*4-2
-  }));
-}
-function startConfetti(){
-  initConfetti();
-  function animate(){
-    requestAnimationFrame(animate);
-    cctx.clearRect(0,0,cCanvas.width,cCanvas.height);
-    confetti.forEach(p=>{
-      p.y += p.speed; p.x += p.drift; p.rot += p.rotSpeed;
-      if(p.y > cCanvas.height+20){ p.y = -20; p.x = Math.random()*cCanvas.width; }
-      cctx.save();
-      cctx.translate(p.x,p.y); cctx.rotate(p.rot*Math.PI/180);
-      cctx.fillStyle = p.color;
-      cctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);
-      cctx.restore();
-    });
-  }
-  animate();
-}
-</script>
+        let lastX = window.innerWidth / 2;
+        let lastY = window.innerHeight / 2;
 
+        function moveBoxRandomly() {
+            const boxWidth = step2.offsetWidth || 280;
+            const boxHeight = step2.offsetHeight || 120;
+            const maxX = Math.max(10, window.innerWidth - boxWidth - 20);
+            const maxY = Math.max(10, window.innerHeight - boxHeight - 20);
+
+            let newX, newY, distance = 0, attempts = 0;
+
+            do {
+                newX = 10 + Math.random() * (maxX - 10);
+                newY = 10 + Math.random() * (maxY - 10);
+                const dx = newX - lastX;
+                const dy = newY - lastY;
+                distance = Math.sqrt(dx * dx + dy * dy);
+                attempts++;
+            } while (distance < 150 && attempts < 50);
+
+            lastX = newX;
+            lastY = newY;
+
+            step2.style.left = newX + 'px';
+            step2.style.top = newY + 'px';
+        }
+
+        function startCountdown() {
+            document.body.classList.add('night-mode');
+            document.getElementById('fireworks-canvas').style.display = 'block';
+            startFireworks();
+
+            countdownText.style.display = 'block';
+            let count = 3;
+            countdownText.innerText = count;
+
+            const interval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownText.style.transform = 'scale(0.8)';
+                    countdownText.style.opacity = '0.4';
+                    setTimeout(() => {
+                        countdownText.innerText = count;
+                        countdownText.style.transform = 'scale(1.15)';
+                        countdownText.style.opacity = '1';
+                    }, 50);
+                } else {
+                    clearInterval(interval);
+                    countdownText.style.display = 'none';
+                    showFinalScreen();
+                }
+            }, 1000);
+        }
+
+        function showFinalScreen() {
+            finalScreen.style.display = 'flex';
+            burstConfetti();
+            playFanfare();
+            setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+
+        // --- ส่วนคำนวณเวลา ---
+        function updateTimer() {
+            const now = new Date();
+            let d = new Date(now);
+
+            let y = d.getFullYear() - metDate.getFullYear();
+            let m = d.getMonth() - metDate.getMonth();
+            let dt = d.getDate() - metDate.getDate();
+
+            if (dt < 0) {
+                m--;
+                let temp = new Date(d.getFullYear(), d.getMonth(), 0);
+                dt += temp.getDate();
+            }
+            if (m < 0) { y--; m += 12; }
+
+            let hr = d.getHours() - metDate.getHours();
+            if (hr < 0) { dt--; hr += 24; }
+
+            let min = d.getMinutes() - metDate.getMinutes();
+            if (min < 0) { hr--; min += 60; }
+
+            let sec = d.getSeconds() - metDate.getSeconds();
+            if (sec < 0) { min--; sec += 60; }
+
+            document.getElementById('statYears').textContent = y;
+            document.getElementById('statMonths').textContent = m;
+            document.getElementById('statDays').textContent = dt;
+            document.getElementById('statHours').textContent = hr;
+            document.getElementById('statMinutes').textContent = min;
+            document.getElementById('statSeconds').textContent = sec;
+        }
+
+        // --- ระบบเสียง Fanfare (Web Audio API, ไม่ต้องใช้ไฟล์เสียงภายนอก) ---
+        function playFanfare() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    const startTime = ctx.currentTime + i * 0.14;
+                    gain.gain.setValueAtTime(0, startTime);
+                    gain.gain.linearRampToValueAtTime(0.18, startTime + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.45);
+                });
+            } catch (e) { /* audio not available, fail silently */ }
+        }
+
+        // --- ระบบพลุ + คอนเฟตตี้ (Canvas) ---
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particles = [];
+        let confetti = [];
+        const palette = ['#F0C419', '#FFE9A8', '#4FA8DA', '#00539C', '#F5F8FC'];
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        function createFirework(x, y) {
+            const particleCount = 60;
+            const color = palette[Math.floor(Math.random() * palette.length)];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * (Math.random() * 10),
+                    vy: (Math.random() - 0.5) * (Math.random() * 10),
+                    color,
+                    alpha: 1,
+                    decay: Math.random() * 0.015 + 0.015
+                });
+            }
+        }
+
+        function burstConfetti() {
+            for (let i = 0; i < 140; i++) {
+                confetti.push({
+                    x: Math.random() * canvas.width,
+                    y: -20 - Math.random() * canvas.height * 0.4,
+                    w: 6 + Math.random() * 5,
+                    h: 4 + Math.random() * 6,
+                    vx: (Math.random() - 0.5) * 2.5,
+                    vy: 2 + Math.random() * 3,
+                    rotation: Math.random() * 360,
+                    vr: (Math.random() - 0.5) * 8,
+                    color: palette[Math.floor(Math.random() * palette.length)],
+                    life: 0
+                });
+            }
+        }
+
+        function startFireworks() {
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.globalCompositeOperation = 'lighter';
+
+                particles.forEach((p, index) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.05;
+                    p.alpha -= p.decay;
+
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = Math.max(0, p.alpha);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (p.alpha <= 0) particles.splice(index, 1);
+                });
+
+                ctx.globalCompositeOperation = 'source-over';
+                confetti.forEach((c, index) => {
+                    c.x += c.vx;
+                    c.y += c.vy;
+                    c.rotation += c.vr;
+                    c.life++;
+
+                    ctx.save();
+                    ctx.globalAlpha = c.life > 500 ? Math.max(0, 1 - (c.life - 500) / 100) : 1;
+                    ctx.translate(c.x, c.y);
+                    ctx.rotate((c.rotation * Math.PI) / 180);
+                    ctx.fillStyle = c.color;
+                    ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+                    ctx.restore();
+
+                    if (c.y > canvas.height + 30 || c.life > 600) confetti.splice(index, 1);
+                });
+                ctx.globalAlpha = 1;
+
+                if (Math.random() < 0.04) {
+                    createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.6));
+                }
+            }
+            animate();
+        }
+    </script>
 </body>
 </html>
