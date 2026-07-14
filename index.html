@@ -323,20 +323,50 @@
     <!-- YouTube IFrame API Script -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- ส่วนที่ 1: ตั้งค่า Youtube BGM ---
+        // --- ส่วนที่ 1: ตั้งค่า Youtube BGM (Autoplay แบบบังคับ) ---
         let player;
+        let isMusicPlaying = false;
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 height: '0',
                 width: '0',
                 videoId: '0i4UH2lK4ag',
                 playerVars: {
-                    'autoplay': 0,
+                    'autoplay': 1, // พยายาม Autoplay ทันที
                     'controls': 0,
                     'loop': 1,
-                    'playlist': '0i4UH2lK4ag'
+                    'playlist': '0i4UH2lK4ag',
+                    'playsinline': 1 // ช่วยให้เล่นบน iOS ได้ดีขึ้น
+                },
+                events: {
+                    'onReady': onPlayerReady
                 }
             });
+        }
+
+        function onPlayerReady(event) {
+            // ลองสั่งเล่นเพลงทันที
+            event.target.playVideo();
+            
+            // ตรวจจับการแตะหน้าจอครั้งแรก หากเบราว์เซอร์บล็อกเสียงไว้
+            document.body.addEventListener('click', function playAudioOnFirstClick() {
+                if(!isMusicPlaying && player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                    isMusicPlaying = true;
+                    // ลบ Event ออกเพื่อไม่ให้ทำงานซ้ำซ้อน
+                    document.body.removeEventListener('click', playAudioOnFirstClick);
+                }
+            }, { once: true });
+            
+            // Touchstart บนมือถือ
+            document.body.addEventListener('touchstart', function playAudioOnFirstTouch() {
+                if(!isMusicPlaying && player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                    isMusicPlaying = true;
+                    document.body.removeEventListener('touchstart', playAudioOnFirstTouch);
+                }
+            }, { once: true });
         }
 
         // --- ส่วนที่ 2: ตั้งค่าตัวแปรวันที่ (15 May 2017) ---
@@ -353,12 +383,8 @@
             const bday = document.getElementById('bday-input').value;
 
             if (bday !== '2004-07-16') {
-                alert("กรุณาใส่วันเกิดให้ถุกก่อนสิคะ อีแก่!");
+                alert("กรุณาใส่วันเกิดให้ถูกก่อนสิคะ อีแก่!");
                 return;
-            }
-
-            if (player && typeof player.playVideo === 'function') {
-                player.playVideo();
             }
 
             step1.classList.remove('active');
