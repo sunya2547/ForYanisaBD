@@ -32,9 +32,9 @@
             transition: background 1.2s ease;
         }
 
-        /* ธีมตอนนับถอยหลัง */
+        /* ธีมตอนนับถอยหลัง (คงสีเดิมไว้ตามที่ต้องการ) */
         body.night-mode {
-            background: radial-gradient(var(--deep-blue) 65%, var(--navy) 65%);
+            background-color: var(--deep-blue);
         }
 
         /* Canvas พลุ + คอนเฟตตี้ */
@@ -333,11 +333,11 @@
                 width: '0',
                 videoId: '0i4UH2lK4ag',
                 playerVars: {
-                    'autoplay': 1, // พยายาม Autoplay ทันที
+                    'autoplay': 1, 
                     'controls': 0,
                     'loop': 1,
                     'playlist': '0i4UH2lK4ag',
-                    'playsinline': 1 // ช่วยให้เล่นบน iOS ได้ดีขึ้น
+                    'playsinline': 1 
                 },
                 events: {
                     'onReady': onPlayerReady
@@ -354,7 +354,6 @@
                 if(!isMusicPlaying && player && typeof player.playVideo === 'function') {
                     player.playVideo();
                     isMusicPlaying = true;
-                    // ลบ Event ออกเพื่อไม่ให้ทำงานซ้ำซ้อน
                     document.body.removeEventListener('click', playAudioOnFirstClick);
                 }
             }, { once: true });
